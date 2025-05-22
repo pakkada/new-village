@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pakkadapuraya Village</title>
+    <style>
+        .leaf-container {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          overflow: hidden;
+          top: 0;
+          left: 0;
+        }
+        
+        .leaf {
+          position: absolute;
+          background: #8BC34A;
+          width: 20px;
+          height: 20px;
+          clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+          animation: fall linear forwards;
+          transform-origin: center;
+        }
+        
+        /* Different leaf colors */
+        .leaf.type1 { background: #8BC34A; } /* Green */
+        .leaf.type2 { background: #FFC107; } /* Yellow */
+        .leaf.type3 { background: #F44336; } /* Red */
+        .leaf.type4 { background: #795548; } /* Brown */
+        
+        @keyframes fall {
+          0% {
+            transform: translate(var(--start-x), -10vh) rotate(0deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          85% {
+            opacity: 1;
+            transform: translate(var(--mid-x), 90vh) rotate(360deg);
+          }
+          100% {
+            transform: translate(var(--end-x), 100vh) rotate(450deg);
+            opacity: 0;
+          }
+        }
+        
+        /* Popping effect when leaf hits ground */
+        @keyframes pop {
+          0% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.5); opacity: 0.8; }
+          100% { transform: scale(0); opacity: 0; }
+        }
+        .div{
+            background-color: rgb(13, 19, 17);
+        }
+        
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding-top: 70px; /* Space for fixed navbar */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 60px 0;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            color: #2c6e49;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: #4c956c;
+            margin: 10px auto;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #09e7dc;
+            padding: 15px 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            background-color: rgba(9, 231, 176, 0.95);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: #ffd166;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #ffd166;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: #ffd166;
+            bottom: -5px;
+            left: 0;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            background-color: #2c6e49;
+            padding: 20px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            transform: translateY(-150%);
+            transition: transform 0.3s ease;
+            z-index: 999;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+        }
+
+        .mobile-menu ul {
+            list-style: none;
+        }
+
+        .mobile-menu li {
+            margin-bottom: 15px;
+        }
+
+        .mobile-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .mobile-menu a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Slider and other sections remain the same as previous code */
+        /* ... (paste all the previous CSS styles here) ... */
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .slide-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .slide-content p {
+                font-size: 1.2rem;
+            }
+
+            .about-content {
+                flex-direction: column;
+            }
+
+            .guide-container {
+                flex-direction: column;
+            }
+        }
+
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 60px 0;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            color: #2c6e49;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: #4c956c;
+            margin: 10px auto;
+        }
+
+        /* Header & Slider */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slider {
+            display: flex;
+            width: 400%;
+            height: 100%;
+            animation: slide 16s infinite;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .slide-content h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: fadeIn 2s;
+        }
+
+        .slide-content p {
+            font-size: 1.5rem;
+            animation: fadeIn 3s;
+        }
+
+        @keyframes slide {
+            0% { margin-left: 0; }
+            20% { margin-left: 0; }
+            25% { margin-left: -100%; }
+            45% { margin-left: -100%; }
+            50% { margin-left: -200%; }
+            70% { margin-left: -200%; }
+            75% { margin-left: -300%; }
+            95% { margin-left: -300%; }
+            100% { margin-left: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* About Section */
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .about-map {
+            flex: 1;
+            min-width: 300px;
+            height: 400px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Highlights Section */
+        .highlights {
+            background-color: #0e0d0d;
+        }
+
+        .highlight-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+
+        
+        .card {
+            background: rgb(245, 241, 241);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(2, 241, 142, 0.959);
+            width: 300px;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-content h3 {
+            margin-bottom: 10px;
+            color: #0b0e0c;
+        }
+
+        .card-content p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+
+
+        .icon {
+            font-size: 2rem;
+            color: #3daa6c;
+            margin-bottom: 15px;
+        }
+
+        /* Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            height: 250px;
+        }
+
+        .gallery-item img, .gallery-item iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Businesses Section */
+        .businesses {
+            background-color: #0e0b0b;
+        }
+
+        .business-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .business-card {
+            background: rgb(237, 242, 243);
+            border-radius: 10px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 5px 15px rgb(61, 255, 2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .business-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .business-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .business-type {
+            background: #5ace8c;
+            color: rgb(247, 239, 239);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 10px 0;
+        }
+
+        /* Notable People Section */
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .person-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(2, 241, 202, 0.959);
+            text-align: center;
+        }
+
+        .person-img {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .person-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .person-card:hover .person-img img {
+            transform: scale(1.1);
+        }
+
+        .person-info {
+            padding: 20px;
+        }
+
+        .person-info h3 {
+            color: #2add77;
+            margin-bottom: 5px;
+        }
+
+        .person-info p {
+            color: #b12222;
+            font-style: italic;
+        }
+
+        /* Facilities Section */
+        .facilities {
+            background-color: #0a0808;
+        }
+
+        .facility-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .facility-item {
+            background: rgb(243, 239, 239);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(2, 120, 231, 0.966);
+        }
+
+        .facility-item h3 {
+            color: #0b0c0b;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .facility-item i {
+            color: #04f36b;
+        }
+
+        /* Tourist Guide Section */
+        .guide-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .guide-info {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .guide-info ul {
+            list-style-type: none;
+        }
+
+        .guide-info li {
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .guide-info li::before {
+            content: '✓';
+            color: #4c956c;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .guide-image {
+            flex: 1;
+            min-width: 300px;
+            height: 400px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .guide-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0b0e0c;
+            color: rgb(221, 210, 210);
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .slide-content p {
+                font-size: 1.2rem;
+            }
+        }
+        .sky {
+      width: 100%;
+      height: 300px;
+      background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d);
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+    
+    .sun {
+      width: 80px;
+      height: 80px;
+      background: #FFD700;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: sunrise 10s infinite alternate;
+      box-shadow: 0 0 40px 15px #FFD700;
+    }
+    
+    @keyframes sunrise {
+      0% {
+        bottom: 20px;
+        background: #FF4500;
+        box-shadow: 0 0 40px 15px #FF4500;
+      }
+      50% {
+        bottom: 60%;
+        background: #FFD700;
+        box-shadow: 0 0 60px 20px #FFD700;
+      }
+      100% {
+        bottom: 20px;
+        background: #FF6347;
+        box-shadow: 0 0 40px 15px #FF6347;
+      }
+    }
+    
+
+    button {
+ border: none;
+ position: relative;
+ width: 200px;
+ height: 73px;
+ padding: 0;
+ z-index: 2;
+ -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='868' width='2500' viewBox='0 0 726 252.17'%3E%3Cpath d='M483.92 0S481.38 24.71 466 40.11c-11.74 11.74-24.09 12.66-40.26 15.07-9.42 1.41-29.7 3.77-34.81-.79-2.37-2.11-3-21-3.22-27.62-.21-6.92-1.36-16.52-2.82-18-.75 3.06-2.49 11.53-3.09 13.61S378.49 34.3 378 36a85.13 85.13 0 0 0-30.09 0c-.46-1.67-3.17-11.48-3.77-13.56s-2.34-10.55-3.09-13.61c-1.45 1.45-2.61 11.05-2.82 18-.21 6.67-.84 25.51-3.22 27.62-5.11 4.56-25.38 2.2-34.8.79-16.16-2.47-28.51-3.39-40.21-15.13C244.57 24.71 242 0 242 0H0s69.52 22.74 97.52 68.59c16.56 27.11 14.14 58.49 9.92 74.73C170 140 221.46 140 273 158.57c69.23 24.93 83.2 76.19 90 93.6 6.77-17.41 20.75-68.67 90-93.6 51.54-18.56 103-18.59 165.56-15.25-4.21-16.24-6.63-47.62 9.93-74.73C656.43 22.74 726 0 726 0z'/%3E%3C/svg%3E") no-repeat 50% 50%;
+ mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='868' width='2500' viewBox='0 0 726 252.17'%3E%3Cpath d='M483.92 0S481.38 24.71 466 40.11c-11.74 11.74-24.09 12.66-40.26 15.07-9.42 1.41-29.7 3.77-34.81-.79-2.37-2.11-3-21-3.22-27.62-.21-6.92-1.36-16.52-2.82-18-.75 3.06-2.49 11.53-3.09 13.61S378.49 34.3 378 36a85.13 85.13 0 0 0-30.09 0c-.46-1.67-3.17-11.48-3.77-13.56s-2.34-10.55-3.09-13.61c-1.45 1.45-2.61 11.05-2.82 18-.21 6.67-.84 25.51-3.22 27.62-5.11 4.56-25.38 2.2-34.8.79-16.16-2.47-28.51-3.39-40.21-15.13C244.57 24.71 242 0 242 0H0s69.52 22.74 97.52 68.59c16.56 27.11 14.14 58.49 9.92 74.73C170 140 221.46 140 273 158.57c69.23 24.93 83.2 76.19 90 93.6 6.77-17.41 20.75-68.67 90-93.6 51.54-18.56 103-18.59 165.56-15.25-4.21-16.24-6.63-47.62 9.93-74.73C656.43 22.74 726 0 726 0z'/%3E%3C/svg%3E") no-repeat 50% 50%;
+ -webkit-mask-size: 100%;
+ cursor: pointer;
+ background-color: transparent;
+ transform: translateY(8px)
+}
+
+button:after {
+ content: '';
+ position: absolute;
+ left: 0;
+ right: 0;
+ bottom: 0;
+ box-shadow: 0px 0 0 0 white;
+ transition: all 2s ease;
+}
+
+button:hover:after {
+ box-shadow: 0px -13px 56px 12px #ffffffa6;
+}
+
+button span {
+ position: absolute;
+ width: 100%;
+ font-size: 15px;
+ font-weight: 100;
+ left: 50%;
+ top: 39%;
+ letter-spacing: 3px;
+ text-align: center;
+ transform: translate(-50%,-50%);
+ color: black;
+ transition: all 2s ease;
+}
+
+button:hover span {
+ color: white;
+}
+
+button:before {
+ content: '';
+ position: absolute;
+ width: 0;
+ height: 100%;
+ background-color: black;
+ left: 50%;
+ top: 50%;
+ transform: translate(-50%, -50%);
+ transition: all 1s ease;
+}
+
+button:hover:before {
+ width: 100%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+  
+
+.cosmic-plasma {
+  width: 100%;
+  height: 100%;
+  background: conic-gradient(
+    from 45deg,
+    rgba(255, 0, 0, 0.4),
+    rgba(0, 0, 255, 0.4),
+    rgba(255, 0, 255, 0.4),
+    rgba(0, 255, 0, 0.4),
+    rgba(255, 0, 0, 0.4)
+  );
+  filter: url(#plasma-texture);
+  position: relative;
+}
+
+.plasma-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 70%
+  );
+  animation: swirl 10s infinite linear;
+}
+
+@keyframes swirl {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+
+.wrapper {
+  display: inline-flex;
+  list-style: none;
+  height: 120px;
+  width: 100%;
+  padding-top: 40px;
+  font-family: "Poppins", sans-serif;
+  justify-content: center;
+}
+
+.wrapper .icon {
+  position: relative;
+  background: #fff;
+  border-radius: 50%;
+  margin: 10px;
+  width: 50px;
+  height: 50px;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.wrapper .tooltip {
+  position: absolute;
+  top: 0;
+  font-size: 14px;
+  background: #fff;
+  color: #fff;
+  padding: 5px 8px;
+  border-radius: 5px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.wrapper .tooltip::before {
+  position: absolute;
+  content: "";
+  height: 8px;
+  width: 8px;
+  background: #fff;
+  bottom: -3px;
+  left: 50%;
+  transform: translate(-50%) rotate(45deg);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.wrapper .icon:hover .tooltip {
+  top: -45px;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.wrapper .icon:hover span,
+.wrapper .icon:hover .tooltip {
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
+}
+
+.wrapper .facebook:hover,
+.wrapper .facebook:hover .tooltip,
+.wrapper .facebook:hover .tooltip::before {
+  background: #036af1;
+  color: #f7f4f4;
+}
+
+.wrapper .twitter:hover,
+.wrapper .twitter:hover .tooltip,
+.wrapper .twitter:hover .tooltip::before {
+  background: #1ca7fd;
+  color: #eee9e9;
+}
+
+.wrapper .instagram:hover,
+.wrapper .instagram:hover .tooltip,
+.wrapper .instagram:hover .tooltip::before {
+  background: hsla(349, 98%, 50%, 0.979);
+  color: #dfd2d2;
+}
+
+
+
+
+
+
+
+
+
+        </style>
+</head>
+<body>
+    <div class="leaf-container" id="leaves"></div>
+
+<script>
+// Configuration
+const config = {
+  totalLeaves: 30,
+  spawnInterval: 1000, // 1 second
+  minDuration: 3,
+  maxDuration: 8
+};
+
+// Leaf types with different shapes
+const leafTypes = [
+  { class: 'type1', shape: 'polygon(50% 0%, 0% 100%, 100% 100%)' }, // Triangle
+  { class: 'type2', shape: 'polygon(50% 0%, 0% 50%, 50% 100%, 100% 50%)' }, // Diamond
+  { class: 'type3', shape: 'ellipse(40% 50% at 50% 50%)' }, // Oval
+  { class: 'type4', shape: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' } // Diamond
+];
+
+function createLeaf() {
+  const leaf = document.createElement('div');
+  const type = leafTypes[Math.floor(Math.random() * leafTypes.length)];
+  
+  leaf.className = `leaf ${type.class}`;
+  
+  // Random starting position (X)
+  const startX = Math.random() * 100;
+  const midX = startX + (Math.random() * 20 - 10); // Slight sway
+  const endX = midX + (Math.random() * 10 - 5);
+  
+  leaf.style.setProperty('--start-x', `${startX}vw`);
+  leaf.style.setProperty('--mid-x', `${midX}vw`);
+  leaf.style.setProperty('--end-x', `${endX}vw`);
+  
+  leaf.style.clipPath = type.shape;
+  leaf.style.width = `${10 + Math.random() * 15}px`;
+  leaf.style.height = `${10 + Math.random() * 15}px`;
+  leaf.style.animationDuration = `${config.minDuration + Math.random() * (config.maxDuration - config.minDuration)}s`;
+  leaf.style.opacity = Math.random() * 0.5 + 0.3;
+  
+  // Random rotation direction
+  leaf.style.animationDirection = Math.random() > 0.5 ? 'normal' : 'reverse';
+  
+  // Add pop effect when animation ends
+  leaf.addEventListener('animationend', function() {
+    this.style.animation = 'pop 0.5s forwards';
+    setTimeout(() => {
+      this.remove();
+      if (document.getElementById('leaves').children.length < config.totalLeaves) {
+        createLeaf();
+      }
+    }, 500);
+  });
+  
+  document.getElementById('leaves').appendChild(leaf);
+}
+
+// Initial batch of leaves
+for (let i = 0; i < config.totalLeaves; i++) {
+  setTimeout(createLeaf, i * (config.spawnInterval / 2));
+}
+
+// Continuous spawning
+setInterval(() => {
+  if (document.getElementById('leaves').children.length < config.totalLeaves) {
+    createLeaf();
+  }
+}, config.spawnInterval);
+
+// Bonus: Wind effect on mouse move
+document.addEventListener('mousemove', (e) => {
+  const windIntensity = (e.clientX / window.innerWidth) * 20 - 10;
+  document.querySelectorAll('.leaf').forEach(leaf => {
+    leaf.style.setProperty('--mid-x', `${parseFloat(leaf.style.getPropertyValue('--mid-x')) + windIntensity}vw`);
+  });
+});
+</script>
+<nav class="navbar">
+    <div class="container nav-container">
+        <a href="#" class="logo">pakkadapuraya<span>Village</span></a>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#highlights">Highlights</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#businesses">Businesses</a></li>
+            <li><a href="#people">People</a></li>
+            <li><a href="#facilities">Facilities</a></li>
+            <li><a href="#guide">Visit</a></li>
+        </ul>
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#highlights">Highlights</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#businesses">Businesses</a></li>
+        <li><a href="#people">People</a></li>
+        <li><a href="#facilities">Facilities</a></li>
+        <li><a href="#guide">Visit</a></li>
+    </ul>
+</div>
+
+<!-- Full-screen Image Slider -->
+
+    
+            
+            
+        
+        <!-- Other slides remain the same -->
+    </div>
+</div>
+
+<!-- All other sections remain the same as previous code -->
+<!-- About, Highlights, Gallery, Businesses, People, Facilities, Guide sections -->
+
+<script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('active');
+    });
+
+    // Close mobile menu when clicking a link
+    const mobileLinks = document.querySelectorAll('.mobile-menu a');
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+
+    // Smooth scrolling for all links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+    
+</script>
+<div class="div">
+  <!-- Notable People -->
+  <section id="people">
+    <div class="container">
+        <h2>pakkadapuraya Village</h2>
+              
+                    <div class="sky" style="display: flex; align-items: center; justify-content: center; "><h2>welcome to pakkadapuraya</h2>
+                    
+                        <div class="sun">
+                          
+                        </div>
+                      </div>
+             
+       
+    
+</section>
+<!-- About the Village -->
+<section id="about">
+    <div class="container">
+        <h2>About Our Village</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>Green Valley is a picturesque village nestled in the foothills of the Western Ghats. Founded in 1823, it was named for its lush green landscapes that remain vibrant throughout the year.</p>
+                <p>With a population of approximately 1,200 people, our village is known for its harmonious blend of cultures, with Hindu, Muslim, and Christian communities celebrating festivals together.</p>
+                <p>The primary occupation is agriculture, with rice, coconut, and spices being our main crops. Traditional arts like pottery and weaving are still practiced by local artisans.</p>
+            </div>
+            <div class="about-map">
+                <!-- Replace with your actual map embed code -->
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3915.6707219282985!2d75.95158087502911!3d11.063295253836845!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba64daae0e4d369%3A0x28c5d233791155e5!2zUGFra2FkYXBwdXJheWEgKCDgtKrgtL7gtJXgtY3gtJXgtJ_gtKrgtY3gtKrgtYHgtLHgtL7gtK8p!5e0!3m2!1sen!2sin!4v1747365638210!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Village Highlights -->
+<section class="highlights" id="highlights">
+    <div class="container">
+        <h2>Village Highlights</h2>
+        <div class="highlight-cards">
+            <div class="card">
+                <img src="https://lh3.googleusercontent.com/gps-cs-s/AC9h4npirgQeMHVljl44EXefMIED4BYpmK3Zm9VdPA3KBV-M5gLa-EiFon3h8kaUKU6K8sEPY49bliw9leo1FmnhQ8Dn2B3TLF9qWEj0D3exg_uHLj6tYzlHZimHc163Gu6T7nNRyQHQrQ=w286-h192-n-k-no" alt=" Juma Masjid">
+                <div class="card-content">
+                    <div class="icon"><i class="fas fa-temple"></i></div>
+                    <h3>pakkadapuraya Juma Masjid</h3>
+                    <p>pakkadapuraya Juma Masjid 2 month Lorem ipsum dolor sit amet consectetur adipi</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrbWEtBUb7sEc2JoYxfR6fg2X_6JBncmqxP6BmOdsnMYqHsIW1KjGO5iuWirsD7fGfNR8EtL_EOkx1m3_3tq8BpBNbs6YLUFT5wZrjUUNxNRG6aQ5JfNsRUoGuNzuNIMgw9yzXn=w408-h306-k-no" alt="Village River">
+                <div class="card-content">
+                    <div class="icon"><i class="fas fa-water"></i></div>
+                    <h3>pakkadapuraya Valley River</h3>
+                    <p>Pristine river perfect for picnics, fishing, and nature walks along its banks.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://akshaya.kerala.gov.in/uploads/centers/5e609bad02fe8-e79cfdec03cfcc9e9f16718f45182632-1200x_.jpg" alt="Historical Fort">
+                <div class="card-content">
+                    <div class="icon"><i class="fas fa-landmark"></i></div>
+                    <h3> pakkadapuraya akshaya centre</h3>
+                    <p>16th century fort offering panoramic views of the surrounding countryside.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Photo & Video Gallery -->
+<section id="gallery">
+    <div class="container">
+        <h2>Photo & Gallery</h2>
+        <div class="gallery-grid">
+
+
+            <div class="gallery-item">
+                <img src="https://content.jdmagicbox.com/comp/malappuram/f9/9999px483.x483.230612042823.a1f9/catalogue/mitra-health-care-vengara-malappuram-clinics-ahy8y8yq80.jpg" alt=" hospital">
+            </div>
+            <div class="gallery-item">
+                <img src="https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqBxsgdYWwZeWGYn1HTb4doM7RxIefkRvHJQ5U_iIBKQbYQ8i5zXjxlp2FvOtDQx-ANHROLXdAjNuuH4MG7imK4Ew7xWoOipVD59Lx9cRO6VK6umyO8XQXA_fqNCYcbLmBW7Ctn=s680-w680-h510-rw" alt="tyre">
+            </div>
+            <div class="gallery-item">
+                <img src="https://content.jdmagicbox.com/v2/comp/malappuram/h4/9999px483.x483.250207152909.x9h4/catalogue/moto-world-auto-mobiles-vettuthodu-malappuram-automobile-part-dealers-lgykkgak7u.jpg" alt="workshop">
+            </div>
+            <div class="gallery-item">
+                <img src="https://lh3.googleusercontent.com/gps-cs-s/AC9h4noYL_Z9hd11YhjBarm0vt0OreDFhlwkhE7eJrHDHO90HWr0Pzj_Wn3Qp0kZyWp2vLDQzFjszyDpL-0BOMBR00FpmfIpn1CVoIhYsA9E7lwtO8PKAowGz8wWYF4eEPJ_a3ywFFhD=s680-w680-h510-rw" alt="adwyes">
+            </div>
+            <div class="gallery-item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRB4N2-vN2DLg7xmzEfqm3mlwMI7aFcOe4yOg&s" alt="fasc">
+            </div>
+            <div class="gallery-item">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9rModGVS0mG7LQpzkTrg21UghKT-bJ5elIA&s" alt="psk">
+            </div>
+        </div>
+    </div>
+    
+    
+</section>
+
+
+<!-- Local Businesses -->
+<section class="businesses" id="businesses">
+    <div class="container">
+        <h2>Local Businesses</h2>
+        
+        <div class="business-list">
+          
+            <div class="business-card">
+              
+                <div class="business-img">
+                    <img src="https://files.yappe.in/place/full/hotel-al-ameen-palace-9238505.webp" alt="AL Amen">
+                </div>
+                <h3>AL Amen hotel</h3>
+                
+                <button>
+                  <span>CALL NOW</span>
+                </button>
+                    
+              
+                <p>Famous for traditional thali meals and village-style chicken curry.</p>
+                <p><i class="fas fa-phone"></i> +91 98765 43210</p>
+            </div>
+            <div class="business-card">
+                <div class="business-img">
+                    <img src="https://oneisok.com/laravel_project/public/storage/item/royal-bakery-2022-03-18-6234d5bb9189d.jpg" alt="royal bakkarey">
+                </div>
+               <h3>royal bakery</h3>
+               <button>
+                <span>CALL NOW</span>
+              </button>
+                <p>Custom stitching of traditional outfits and modern clothing.</p>
+                <p><i class="fas fa-phone"></i> +91 98765 43211</p>
+            </div>
+            <div class="business-card">
+                <div class="business-img">
+                    <img src="https://lh3.googleusercontent.com/p/AF1QipM9ZLq7ZGvOL7AiDbnJXQ4jyFwuxXFfwvkZld-F=s680-w680-h510-rw" alt="MOTO WORLD  Works">
+                </div>
+                <h3>MOTO WORLD  Works</h3>
+                <button>
+                  <span>CALL NOW</span>
+                </button>
+
+                   
+                <p>1 year ago Lorem ipsum dolor sit, amet consectetur adipisicing. </p>
+                <p><i class="fas fa-phone"></i> +91 98765 43212</p>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- Full-screen Image Slider -->
+<div class="slider-container">
+<div class="slider">
+    <div class="slide">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQ5EaB1ByXroHZreg617Iy1QJqo3tKVBSYIlvxyq_xfxxcrwyUN_Qvm1zqYtVu_i9wtcxmcO31XvsQgjhv_WsVJPHlsXLEC8CXQ30uJtl4DRRkh94pm51LmmPT-5QgNwSt5DHNaJroFCKQ/s1600/800px-Thiruvananthapuram_Ponmudi.jpg" alt="Village Landscape">
+        <div class="slide-content">
+            <h1>Welcome to Village </h1>
+            <p>Where Nature Meets Tradition</p>
+        </div>
+    </div>
+    <div class="slide">
+        <img src="https://assets-news.housing.com/news/wp-content/uploads/2022/08/14104744/Top-tourist-attractions-in-Malappuram-and-things-to-do.jpg" alt="Village Temple">
+        <div class="slide-content">
+            <h1>Explore Our Heritage</h1>
+            <p>Ancient Temples and Cultural Treasures</p>
+        </div>
+    </div>
+    <div class="slide">
+      <img src="https://www.keralatourism.org/images/enchanting_kerala/hri/Kodikuthimala_Malappuram_1160.jpg" alt="">
+        <div class="slide-content">
+            <h1>Celebrate With Us</h1>
+            <p>Vibrant Festivals and Local Events</p>
+        </div>
+    </div>
+    <div class="slide">
+        <img src="https://www.sreestours.com/blog/wp-content/uploads/2014/01/munnar-hillstation.jpg" alt="Village Agriculture">
+        <div class="slide-content">
+            <h1>Discover Rural Life</h1>
+            <p>Organic Farms and Scenic Countryside</p>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<!-- Local Facilities -->
+<section class="facilities" id="facilities">
+    <div class="container">
+        <h2> Facilities</h2>
+        <div class="facility-list">
+            <div class="facility-item">
+                <h3><i class="fas fa-school"></i> p.m.s.a.m.u.p. School pakkadapuraya</h3>
+                <p>Classes:5th to 10th Standard</p>
+                <p>Timings: 10:30 AM - 4:00 PM </p>
+                <p>Contact: +91 98765 43213</p>
+            </div>
+            <div class="facility-item">
+                <h3><i class="fas fa-hospital"></i> mitra hospital </h3>
+                <p>Services: OPD, Emergency, Vaccination</p>
+                <p>Timings:8:00am  10:00pm</p>
+                <p>Contact: +91 98765 43214</p>
+            </div>
+            <div class="facility-item">
+                <h3><i class="fas fa-university"></i>A.M.L.P school pakkadapuraya</h3>
+                <p>Classes:LKG to 4th Standard</p>
+                <p>Timings:10:30 AM - 4:00 PM </p>
+                <p>Contact: +91 98765 43215</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Tourist Guide -->
+<section id="guide">
+    <div class="container">
+        <h2>Juma Masjid</h2>
+        
+        <div class="guide-container">
+            <div class="guide-info">
+                <h3>How to Reach</h3>
+                <ul>
+                    <li><strong>By Air:</strong> Nearest airport: City International (80 m)</li>
+                    <li><strong>By Train:</strong> Nearest station: Junction Town (25 m)</li>
+                    <li><strong>By Road:</strong> Regular buses from nearby cities</li>
+                </ul>
+                
+                <h3>Best Time to Visit</h3>
+                <ul>
+                    <li>October to March: Pleasant weather (15°C-28°C)</li>
+                    <li>April: Annual harvest festival</li>
+                    <li>August: Traditional boat race</li>
+                </ul>
+                
+                <h3>Local Customs</h3>
+                <ul>
+                    <li>Dress modestly when visiting religious sites</li>
+                    <li>Remove footwear before entering homes/temples</li>
+                    <li>Ask permission before photographing locals</li>
+                </ul>
+            </div>
+            <div class="guide-image">
+                <img src="https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrLFTULj7opLYBspCJ3PKNjOo8EJ7NYwrB5lTpVLmTQglwwbzS5xxRAiFrX1laZpgpxmKxmA1R_O2SHV2GNA0Eckdess9qv7PEWRUioNhn4VYKkYsyxsAOR6dJmJQS6Qacxd7skpA=w408-h544-k-no" alt="Village Tourism">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    
+    <div class="container">
+        <ul class="wrapper">
+            <li class="icon facebook">
+              <span class="tooltip">Facebook</span>
+              <svg
+                viewBox="0 0 320 512"
+                height="1.2em"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"
+                ></path>
+              </svg>
+            </li>
+            <li class="icon twitter">
+              <span class="tooltip">Twitter</span>
+              <svg
+                height="1.8em"
+                fill="currentColor"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+                class="twitter"
+              >
+                <path
+                  d="M42,12.429c-1.323,0.586-2.746,0.977-4.247,1.162c1.526-0.906,2.7-2.351,3.251-4.058c-1.428,0.837-3.01,1.452-4.693,1.776C34.967,9.884,33.05,9,30.926,9c-4.08,0-7.387,3.278-7.387,7.32c0,0.572,0.067,1.129,0.193,1.67c-6.138-0.308-11.582-3.226-15.224-7.654c-0.64,1.082-1,2.349-1,3.686c0,2.541,1.301,4.778,3.285,6.096c-1.211-0.037-2.351-0.374-3.349-0.914c0,0.022,0,0.055,0,0.086c0,3.551,2.547,6.508,5.923,7.181c-0.617,0.169-1.269,0.263-1.941,0.263c-0.477,0-0.942-0.054-1.392-0.135c0.94,2.902,3.667,5.023,6.898,5.086c-2.528,1.96-5.712,3.134-9.174,3.134c-0.598,0-1.183-0.034-1.761-0.104C9.268,36.786,13.152,38,17.321,38c13.585,0,21.017-11.156,21.017-20.834c0-0.317-0.01-0.633-0.025-0.945C39.763,15.197,41.013,13.905,42,12.429"
+                ></path>
+              </svg>
+            </li>
+            <li class="icon instagram">
+              <span class="tooltip">Instagram</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="1.2em"
+                fill="currentColor"
+                class="bi bi-instagram"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"
+                ></path>
+              </svg>
+            </li>
+          </ul>
+          
+          
+        <h3>pakkadapuraya Village</h3>
+        <p>Experience the beauty of rural India</p>
+        <p>Contact: villagepanchayat@ pakkadapuraya Village.in | +91 98765 43210</p>
+        <p>&copy; 2025 pakkadapuraya Village. All Rights Reserved.</p>
+        
+</body>
+</html>
